@@ -31,11 +31,11 @@ def section_title(title, color):
     st.markdown(f"<h2 style='color: {color};'>{title}</h2>", unsafe_allow_html=True)
 
 with st.container():
-    section_title("Schedule a Task", "#FF6347")
+    section_title("talk to me buddy", "#FF6347")
     with st.form(key='schedule_task_form'):
         col1, col2 = st.columns([4, 1])
         with col1:
-            ques = st.text_input("Enter your query sir")
+            ques = st.text_input("Enter your query buddy")
         with col2:
             submit_button = st.form_submit_button(label="search")
         if submit_button:
@@ -46,7 +46,7 @@ with st.container():
                 st.error(response.json()["detail"])
 
 with st.container():
-    section_title("Scheduled Tasks", "#32CD32")
+    section_title("Planned Activities", "#32CD32")
     get_tasks_response = requests.get(f"{base_url}/tasks/")
     if get_tasks_response.status_code == 200:
         tasks = get_tasks_response.json()
