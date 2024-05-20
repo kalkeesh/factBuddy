@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from typing import List
 import re
 from datetime import datetime
-import wikipediaapi
 import requests
 
 app = FastAPI()
