@@ -79,44 +79,22 @@ async def wiki_answer(command: str):
     info = get_wikipedia_summary(wiki)
     return info
 
+
 def get_wikipedia_summary(query: str, sentences: int = 2) -> str:
     try:
-        params = {
-            "action": "query",
-            "format": "json",
-            "prop": "extracts",
-            "exintro": True,
-            "explaintext": True,
-            "exsentences": sentences,
-            "titles": query
+        headers = {
+            'User-Agent': 'main/1.0 (kalkeeshjamipics@gmail.com)'
         }
-        response = requests.get("https://en.wikipedia.org/w/api.php", params=params)
+        response = requests.get(f"https://en.wikipedia.org/api/rest_v1/page/summary/{query}", headers=headers)
         data = response.json()
-        pages = data["query"]["pages"]
-        for page_id in pages:
-            page = pages[page_id]
-            if "extract" in page:
-                return page["extract"]
-        return "Sorry, I couldn't find any information on that topic."
+        if 'extract' in data:
+            summary = data['extract']
+            summary_sentences = '. '.join(summary.split('. ')[:sentences])
+            return summary_sentences
+        else:
+            return "Sorry, I couldn't find any information on that topic."
     except Exception as e:
         return f"An error occurred: {e}"
-
-
-# def get_wikipedia_summary(query: str, sentences: int = 2) -> str:
-#     try:
-#         headers = {
-#             'User-Agent': 'main/1.0 (kalkeeshjamipics@gmail.com)'
-#         }
-#         response = requests.get(f"https://en.wikipedia.org/api/rest_v1/page/summary/{query}", headers=headers)
-#         data = response.json()
-#         if 'extract' in data:
-#             summary = data['extract']
-#             summary_sentences = '. '.join(summary.split('. ')[:sentences])
-#             return summary_sentences
-#         else:
-#             return "Sorry, I couldn't find any information on that topic."
-#     except Exception as e:
-#         return f"An error occurred: {e}"
 
 async def task_scheduler(ques: str):
     task_match = re.search(r'-(.*?)\sat', ques)
@@ -134,7 +112,7 @@ async def task_scheduler(ques: str):
     task_data = {"task": task, "time": formatted_time}
     collection.insert_one(task_data)
     
-    return {"task": task, "time": formatted_time}
+    return {"task scheduled"}
     # Function definition remains the same as before
 
 @app.get("/tasks/")
